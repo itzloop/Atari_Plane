@@ -3,7 +3,7 @@ Game *game = nullptr;
 int main(int argc, char* argv[])
 {
     game = new Game();  
-    game->Init("Atari Plane" , SDL_WINDOWPOS_CENTERED ,SDL_WINDOWPOS_CENTERED , 800 , 640 , true );
+    game->Init("Atari Plane" , SDL_WINDOWPOS_CENTERED ,SDL_WINDOWPOS_CENTERED , 800 , 640 , false );
     while(game->Running())
     {
         game->HandleEvents();
