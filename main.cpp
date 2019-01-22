@@ -1,10 +1,9 @@
 #include "Game.h"
-
-Game* game = nullptr;
+Game *game = nullptr;
 int main(int argc, char* argv[])
 {
     game = new Game();  
-    game->Init("Atari Plane" , SDL_WINDOWPOS_CENTERED ,SDL_WINDOWPOS_CENTERED , 800 , 640 , false );
+    game->Init("Atari Plane" , SDL_WINDOWPOS_CENTERED ,SDL_WINDOWPOS_CENTERED , 800 , 640 , true );
     while(game->Running())
     {
         game->HandleEvents();
@@ -12,6 +11,7 @@ int main(int argc, char* argv[])
         game->Render();
     }
     game->Clean();
+     return 0;
     //renderTexture(LoadTexture( "Images/sina.bmp", MainRenderer) , MainRenderer ,0 , 0);
     
     // MainSurface = SDL_LoadBMP("Images/sina.bmp");
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
     // //Update the screen
     
     //SDL_Delay(10000);
-    return 0;
+   
 
 }
 
