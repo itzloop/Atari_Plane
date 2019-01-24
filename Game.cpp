@@ -36,9 +36,10 @@ void Game::Init(const char* title , int x , int y , int width , int height , boo
         isRunning = false;
     }
     map = new Map();
-    Player.addComponent<TransformComponent>(100 , 200);
+    Player.addComponent<TransformComponent>(100 , -300);
     Player.addComponent<SpriteComponent>("Assets/ball.png");
     Player.addComponent<KeyboardController>();
+
     
 
 }

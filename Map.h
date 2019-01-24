@@ -7,9 +7,9 @@ class Map
 public:
     Map();
     ~Map();
-    void LoadMap(int lvl[][50]);
+    void LoadMap(int arr[][50]);
     void DrawMap();
-
+    void shift(int arr[][50]);
 
 private:
     SDL_Rect src , dest;
