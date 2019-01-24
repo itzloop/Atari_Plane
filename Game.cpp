@@ -1,7 +1,17 @@
+#pragma once
 #include "Game.h"
-
+#include "TextureManager.h"
+#include "ECS/Components.h"
+#include "Map.h"
+#include "Vector2D.h"
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Texture* playertexture;
+SDL_Rect srcRect , destRect;
+Manager manager;
+auto& Player(manager.addEntity());
+SDL_Event Game::event;
+Map* map;
+
 Game::Game(){
 
 }
@@ -25,13 +35,15 @@ void Game::Init(const char* title , int x , int y , int width , int height , boo
     else{
         isRunning = false;
     }
+    map = new Map();
+    Player.addComponent<TransformComponent>(100 , 200);
+    Player.addComponent<SpriteComponent>("Assets/ball.png");
+    Player.addComponent<KeyboardController>();
+    
 
-    SDL_Surface* tempSurface = IMG_Load("Assets/ball.png");
-    playertexture = SDL_CreateTextureFromSurface(renderer , tempSurface);
-    SDL_FreeSurface(tempSurface); 
 }
 void Game::HandleEvents(){
-    SDL_Event event;
+    
     SDL_PollEvent(&event);
     switch(event.type){
         case SDL_QUIT: isRunning = false;
@@ -39,11 +51,23 @@ void Game::HandleEvents(){
     }
 }
 void Game::Update(){
+    // destRect.h = 60;
+    // destRect.w = 75;
+    manager.refresh();
+    manager.Update();
+
+    
+    //Player.getComponent<TransformComponent>().pos.Add(Vector2D(1 , 1) );
+    
+    //destRect.x = newPlayer.getComponent<TransformComponent>().x();
+    //destRect.y = newPlayer.getComponent<TransformComponent>().y();
+   // std::cout<<player.getComponent<TransformComponent>()->pos.x<<endl;
 
 }
 void Game::Render(){
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer , playertexture , NULL , NULL);
+    map->DrawMap();
+    Player.getComponent<SpriteComponent>().Draw();
     SDL_RenderPresent(renderer);
 }
 void Game::Clean(){

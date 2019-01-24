@@ -17,12 +17,12 @@ public:
     void Clean();
     bool Running();
     static SDL_Renderer* renderer;
-    
+    static SDL_Event event;
 
 private:
     bool isRunning;
     SDL_Window* window;
-    
+    int count;
     
 };
 
