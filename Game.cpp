@@ -4,11 +4,17 @@
 #include "ECS/Components.h"
 #include "Map.h"
 #include "Vector2D.h"
+#include "Collision.h"
+
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Texture* playertexture;
 SDL_Rect srcRect , destRect;
+bool Game::isFired = false;
 Manager manager;
 auto& Player(manager.addEntity());
+auto& Boat(manager.addEntity());
+auto& Chopter(manager.addEntity());
+auto& Fuel(manager.addEntity());
 SDL_Event Game::event;
 Map* map;
 
@@ -36,9 +42,17 @@ void Game::Init(const char* title , int x , int y , int width , int height , boo
         isRunning = false;
     }
     map = new Map();
-    Player.addComponent<TransformComponent>(100 , -300);
-    Player.addComponent<SpriteComponent>("Assets/ball.png");
+    Player.addComponent<TransformComponent>(100 , 875 , 75, 65 , 1);
+    Player.addComponent<SpriteComponent>("Assets/Plane.png");
     Player.addComponent<KeyboardController>();
+    Player.addComponent<ColliderComponent>("Player");
+    Boat.addComponent<TransformComponent>(200 , 100 , 230 , 60 , 1);
+    Boat.addComponent<SpriteComponent>("Assets/Boat.png");
+    Boat.addComponent<ColliderComponent>("wall");
+    Fuel.addComponent<TransformComponent>(200 , 500);
+    Fuel.addComponent<SpriteComponent>("Assets/Fuel.png");
+    Chopter.addComponent<TransformComponent>(200 , 700);
+    Chopter.addComponent<SpriteComponent>("Assets/Chopter.png");
 
     
 
@@ -56,7 +70,14 @@ void Game::Update(){
     // destRect.w = 75;
     manager.refresh();
     manager.Update();
+    if(Collision::AABB(Player.getComponent<ColliderComponent>().collider,
+    Boat.getComponent<ColliderComponent>().collider
+    ))
+    {
+        std::cout<<"Wall hit"<<std::endl;
+    }
 
+    //std::cout<<Player.getComponent<TransformComponent>().pos.y<<std::endl;
     
     //Player.getComponent<TransformComponent>().pos.Add(Vector2D(1 , 1) );
     
@@ -68,7 +89,13 @@ void Game::Update(){
 void Game::Render(){
     SDL_RenderClear(renderer);
     map->DrawMap();
+    
+    Fuel.getComponent<SpriteComponent>().Draw();
+    Chopter.getComponent<SpriteComponent>().Draw();
+    Boat.getComponent<SpriteComponent>().Draw();
     Player.getComponent<SpriteComponent>().Draw();
+    //SDL_DestroyTexture(Fuel.getComponent<SpriteComponent>().getTexture());
+    
     SDL_RenderPresent(renderer);
 }
 void Game::Clean(){

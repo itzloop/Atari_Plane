@@ -18,7 +18,7 @@ public:
     bool Running();
     static SDL_Renderer* renderer;
     static SDL_Event event;
-
+    static bool isFired;
 private:
     bool isRunning;
     SDL_Window* window;
