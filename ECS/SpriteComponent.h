@@ -2,7 +2,7 @@
 #include "Components.h"
 #include "SDL2/SDL.h"
 #include "../TextureManager.h"
-
+#include "../AssetManager.h"
 class SpriteComponent : public Component
 {
 private:
@@ -14,17 +14,17 @@ private:
 public:
 
     SpriteComponent() = default;
-    SpriteComponent(const char* path)
+    SpriteComponent(std::string id)
     {
-        setTexture(path);
+        setTexture(id);
     }
     ~SpriteComponent()
     {
-        SDL_DestroyTexture(texture);
+        
     }
-    void setTexture(const char* path)
+    void setTexture(std::string id)
     {
-        texture = TextureManager::LoadTexture(path);
+        texture = Game::assets->GetTexture(id);
     }
 
     void Init() override{
@@ -35,8 +35,8 @@ public:
     }
 
     void Update() override{
-        destRect.x = (int)transform->pos.x;
-        destRect.y = (int)transform->pos.y;
+        destRect.x = static_cast<int>(transform->pos.x);
+        destRect.y = static_cast<int>(transform->pos.y);
         destRect.w = transform->width * transform->scale;
         destRect.h = transform->height * transform->scale;
     }

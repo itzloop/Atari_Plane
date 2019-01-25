@@ -8,9 +8,9 @@ public:
     SDL_Rect collider;
     std::string tag;
     TransformComponent* transform;
-    ColliderComponent(std::string name)
+    ColliderComponent(std::string t)
     {
-        tag = name;
+        tag = t;
     }
     void Init() override
     {
@@ -19,6 +19,8 @@ public:
             entity->addComponent<TransformComponent>();
         }
         transform = &entity->getComponent<TransformComponent>();
+
+        Game::colliders.push_back(this);
     }
 
     void Update() override

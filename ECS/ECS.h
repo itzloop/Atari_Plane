@@ -41,11 +41,12 @@ class Entity
 {
 
 private:
-	bool active = true;
+	
 	std::vector<std::unique_ptr<Component>> components;
 	ComponentArray componentArray;
 	ComponentBitSet componentBitSet;
 public:
+bool active = true;
 	void Update()
 	{
 		for (auto& c : components)c->Update();

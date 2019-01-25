@@ -28,11 +28,11 @@ public:
                     break;
                 case SDLK_LEFT:
                     transform->velocity.x = -1;
-                    sprite->setTexture("Assets/left_plane.png");
+                    sprite->setTexture("left_plane");
                     break;
                 case SDLK_RIGHT:
                     transform->velocity.x = 1;
-                    sprite->setTexture("Assets/right_plane.png");
+                    sprite->setTexture("right_plane");
                     break;
                 case SDLK_DOWN:
                     transform->velocity.y = 1;
@@ -51,11 +51,11 @@ public:
                     break;
                 case SDLK_LEFT:
                     transform->velocity.x = 0;
-                    sprite->setTexture("Assets/Plane.png");
+                    sprite->setTexture("Player");
                     break;
                 case SDLK_RIGHT:
                     transform->velocity.x = 0;
-                    sprite->setTexture("Assets/Plane.png");
+                    sprite->setTexture("Player");
                     break;
                 case SDLK_DOWN:
                     transform->velocity.y = 0;

@@ -5,16 +5,22 @@
 #include "Map.h"
 #include "Vector2D.h"
 #include "Collision.h"
+#include "AssetManager.h"
 
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Texture* playertexture;
 SDL_Rect srcRect , destRect;
 bool Game::isFired = false;
 Manager manager;
+std::vector<ColliderComponent*> Game::colliders;
+AssetManager* Game::assets = new AssetManager(&manager);
 auto& Player(manager.addEntity());
 auto& Boat(manager.addEntity());
 auto& Chopter(manager.addEntity());
 auto& Fuel(manager.addEntity());
+auto& tile0(manager.addEntity());
+auto& tile1(manager.addEntity());
+auto& tile2(manager.addEntity());
 SDL_Event Game::event;
 Map* map;
 
@@ -37,22 +43,36 @@ void Game::Init(const char* title , int x , int y , int width , int height , boo
         if(renderer)
             std::cout<<"renderer is created"<<std::endl;
         isRunning = true;
+        SDL_SetRenderDrawColor(renderer,255 , 255 , 255 , 255);
     }
     else{
         isRunning = false;
     }
+    assets->AddTexture("Player" , "Assets/Plane.png");
+    assets->AddTexture("Boat" , "Assets/Boat.png");
+    assets->AddTexture("Fuel" , "Assets/Fuel.png");
+    assets->AddTexture("Chopter" , "Assets/Chopter.png");
+    assets->AddTexture("left_plane" , "Assets/left_plane.png");
+    assets->AddTexture("right_plane" , "Assets/right_plane.png");
+    assets->AddTexture("grass" , "Assets/grass.png");
+    assets->AddTexture("water" , "Assets/water.png");
     map = new Map();
+    tile0.addComponent<TileComponent>(200 , 200 , 32 , 32 , 0);
+    tile1.addComponent<TileComponent>(250 , 250 , 32 , 32 , 1);
+    tile1.addComponent<ColliderComponent>("grass");
     Player.addComponent<TransformComponent>(100 , 875 , 75, 65 , 1);
-    Player.addComponent<SpriteComponent>("Assets/Plane.png");
+    Player.addComponent<SpriteComponent>("Player");
     Player.addComponent<KeyboardController>();
     Player.addComponent<ColliderComponent>("Player");
     Boat.addComponent<TransformComponent>(200 , 100 , 230 , 60 , 1);
-    Boat.addComponent<SpriteComponent>("Assets/Boat.png");
-    Boat.addComponent<ColliderComponent>("wall");
-    Fuel.addComponent<TransformComponent>(200 , 500);
-    Fuel.addComponent<SpriteComponent>("Assets/Fuel.png");
-    Chopter.addComponent<TransformComponent>(200 , 700);
-    Chopter.addComponent<SpriteComponent>("Assets/Chopter.png");
+    Boat.addComponent<SpriteComponent>("Boat");
+    Boat.addComponent<ColliderComponent>("Boat");
+    Fuel.addComponent<TransformComponent>(200 , 500 , 80 , 150 ,1);
+    Fuel.addComponent<SpriteComponent>("Fuel");
+    Fuel.addComponent<ColliderComponent>("Fuel");
+    Chopter.addComponent<TransformComponent>(200 , 700 , 115 , 70 , 1);
+    Chopter.addComponent<SpriteComponent>("Chopter");
+    Chopter.addComponent<ColliderComponent>("Chopter");
 
     
 
@@ -70,32 +90,18 @@ void Game::Update(){
     // destRect.w = 75;
     manager.refresh();
     manager.Update();
-    if(Collision::AABB(Player.getComponent<ColliderComponent>().collider,
-    Boat.getComponent<ColliderComponent>().collider
-    ))
+    for(auto cc : colliders)
     {
-        std::cout<<"Wall hit"<<std::endl;
+        if(cc->tag != "Player")
+        {
+            Collision::AABB(Player.getComponent<ColliderComponent>(),*cc);
+        }
+   
     }
-
-    //std::cout<<Player.getComponent<TransformComponent>().pos.y<<std::endl;
-    
-    //Player.getComponent<TransformComponent>().pos.Add(Vector2D(1 , 1) );
-    
-    //destRect.x = newPlayer.getComponent<TransformComponent>().x();
-    //destRect.y = newPlayer.getComponent<TransformComponent>().y();
-   // std::cout<<player.getComponent<TransformComponent>()->pos.x<<endl;
-
 }
 void Game::Render(){
     SDL_RenderClear(renderer);
-    map->DrawMap();
-    
-    Fuel.getComponent<SpriteComponent>().Draw();
-    Chopter.getComponent<SpriteComponent>().Draw();
-    Boat.getComponent<SpriteComponent>().Draw();
-    Player.getComponent<SpriteComponent>().Draw();
-    //SDL_DestroyTexture(Fuel.getComponent<SpriteComponent>().getTexture());
-    
+    manager.Draw();
     SDL_RenderPresent(renderer);
 }
 void Game::Clean(){
@@ -105,4 +111,9 @@ void Game::Clean(){
 }
 bool Game::Running(){
     return isRunning;
+}
+
+void Game::AddTile(int id , int x , int y)
+{
+
 }

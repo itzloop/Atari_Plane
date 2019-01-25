@@ -15,10 +15,9 @@ public:
     int scale = 1;
     Vector2D pos; 
     Vector2D velocity;
-    int speed = 5;
+    int speed = 8;
     TransformComponent(){
-        pos.x = 0.0f;
-        pos.y = 0.0f;
+        pos.Zero();
        
    }
     TransformComponent(float x , float y){
@@ -31,18 +30,17 @@ public:
         height = h;
         width = w;
         scale = sc; 
+        
     }
 
     
       TransformComponent(int sc){
-        pos.x = 0;
-        pos.y = 0;
+       pos.Zero();
         scale = sc; 
     }
     
     void Init() override{
-        velocity.x = 0;
-        velocity.y = 0;
+       velocity.Zero();
     }
 
     void Update() override
