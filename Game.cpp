@@ -7,6 +7,7 @@
 #include "Collision.h"
 #include "AssetManager.h"
 
+
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Texture* playertexture;
 SDL_Rect srcRect , destRect;
@@ -18,9 +19,7 @@ auto& Player(manager.addEntity());
 auto& Boat(manager.addEntity());
 auto& Chopter(manager.addEntity());
 auto& Fuel(manager.addEntity());
-auto& tile0(manager.addEntity());
-auto& tile1(manager.addEntity());
-auto& tile2(manager.addEntity());
+
 SDL_Event Game::event;
 Map* map;
 
@@ -57,9 +56,7 @@ void Game::Init(const char* title , int x , int y , int width , int height , boo
     assets->AddTexture("grass" , "Assets/grass.png");
     assets->AddTexture("water" , "Assets/water.png");
     map = new Map();
-    tile0.addComponent<TileComponent>(200 , 200 , 32 , 32 , 0);
-    tile1.addComponent<TileComponent>(250 , 250 , 32 , 32 , 1);
-    tile1.addComponent<ColliderComponent>("grass");
+    Map::LoadMap("map30*40.txt" , 30 , 40);
     Player.addComponent<TransformComponent>(100 , 875 , 75, 65 , 1);
     Player.addComponent<SpriteComponent>("Player");
     Player.addComponent<KeyboardController>();
@@ -115,5 +112,6 @@ bool Game::Running(){
 
 void Game::AddTile(int id , int x , int y)
 {
-
+    auto& tile(manager.addEntity());
+    tile.addComponent<TileComponent>(x,y,30,30 , id);
 }
