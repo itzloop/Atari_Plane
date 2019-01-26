@@ -1,7 +1,7 @@
 #pragma once
 #include "ECS.h"
 #include "Components.h"
-
+#include "../Vector2D.h"
 class ProjectileComponenet : public Component
 {
 
@@ -20,9 +20,8 @@ void Init() override{
 void Update() override
 {
     distance += speed;
-    if(distance > range)
-        entity->Destroy();
-    else if(transform->pos.y < 0 ||
+    
+     if(transform->pos.y < 0 ||
             transform->pos.x < 0 ||
             transform->pos.x > 900
     )
@@ -33,7 +32,7 @@ void Update() override
 private:
     TransformComponent* transform;
     int range = 0;
-    int speed = 0;
+    int speed = 10;
     int distance = 0;
 
 };

@@ -11,6 +11,7 @@ void Map::LoadMap(std::string path , int sizex , int sizey)
 {
     char tile;
     std::fstream mapfile;
+
     mapfile.open(path);
     
     for(int y = 0 ; y < sizey ;y++ )
@@ -18,20 +19,21 @@ void Map::LoadMap(std::string path , int sizex , int sizey)
         for(int x = 0 ; x < sizex ; x++)
         {
             mapfile.get(tile);
-            if(tile == '\n')
+            
+            if(x == 0)
             {
-                    Game::AddTile(1 , x*20 , y*20);
-                    mapfile.write(&tile , 1);              
+                Game::AddTile(1 , x*30 , y*30);   
+                 mapfile.ignore(2,',');          
             } 
             else
             {
-                Game::AddTile(atoi(&tile) , x*20 , y*20);
+               // Game::AddTile(atoi(&tile) , x*30 , y*30);
                 mapfile.ignore(2,',');
             }
             
            
         }
-       
+       //std::cout<<std::endl;
     }
 
     

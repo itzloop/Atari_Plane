@@ -24,11 +24,23 @@ public:
     static AssetManager* assets;
     static SDL_Event event;
     static bool isFired;
+    enum groupLabrls : std::size_t
+{
+    groupWall,
+    groupPlayers,
+    groupEnemies,
+    groupColliders,
+    groupFriend,
+    groupProjectiles
+};
+
     static std::vector<ColliderComponent*> colliders;
 private:
     bool isRunning;
     SDL_Window* window;
     int count;
+    int Health = 5;
+    float fuel = 100.f;
     
 };
 

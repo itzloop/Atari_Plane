@@ -10,14 +10,15 @@ private:
 
 
 public:
-    int height = 32;
-    int width = 32;
+    int height = 400;
+    int width = 200;
     int scale = 1;
     Vector2D pos; 
     Vector2D velocity;
     int speed = 8;
     TransformComponent(){
         pos.Zero();
+        velocity.Zero();
        
    }
     TransformComponent(float x , float y){
@@ -47,10 +48,13 @@ public:
     {
         if(velocity.x == 1 ) 
         {
-            if(pos.x <= 1150)
+            
+            if(pos.x <= 780)
                 pos.x += velocity.x * speed;
+          
+                
         }
-        else
+        else if(velocity.x == -1)
         {
             if(pos.x >= 0)
                 pos.x += velocity.x * speed;

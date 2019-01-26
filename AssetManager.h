@@ -14,7 +14,10 @@ AssetManager(Manager* man);
 //gameobjects
 
 void CreateProjectile(Vector2D pos , int range , int speed ,  std::string id);
-
+void CreateEnemy( Vector2D pos , int speed ,  std::string id);
+void CreateFriend( Vector2D pos ,int speed ,  std::string id);
+void CreateWall( Vector2D pos ,int speed ,  std::string id);
+	
 //texute management
 void AddTexture(std::string id , const char* path);
 SDL_Texture* GetTexture(std::string id);

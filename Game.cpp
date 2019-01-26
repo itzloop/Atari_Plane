@@ -7,7 +7,6 @@
 #include "Collision.h"
 #include "AssetManager.h"
 
-
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Texture* playertexture;
 SDL_Rect srcRect , destRect;
@@ -16,9 +15,9 @@ Manager manager;
 std::vector<ColliderComponent*> Game::colliders;
 AssetManager* Game::assets = new AssetManager(&manager);
 auto& Player(manager.addEntity());
-auto& Boat(manager.addEntity());
-auto& Chopter(manager.addEntity());
-auto& Fuel(manager.addEntity());
+// auto& Boat(manager.addEntity());
+// auto& Chopter(manager.addEntity());
+// auto& Fuel(manager.addEntity());
 
 SDL_Event Game::event;
 Map* map;
@@ -42,7 +41,7 @@ void Game::Init(const char* title , int x , int y , int width , int height , boo
         if(renderer)
             std::cout<<"renderer is created"<<std::endl;
         isRunning = true;
-        SDL_SetRenderDrawColor(renderer,255 , 255 , 255 , 255);
+        SDL_SetRenderDrawColor(renderer,45 , 50 , 184 , 255);
     }
     else{
         isRunning = false;
@@ -55,22 +54,22 @@ void Game::Init(const char* title , int x , int y , int width , int height , boo
     assets->AddTexture("right_plane" , "Assets/right_plane.png");
     assets->AddTexture("grass" , "Assets/grass.png");
     assets->AddTexture("water" , "Assets/water.png");
+    assets->AddTexture("Projectile" , "Assets/Missile.png");
+    assets->AddTexture("Wall" , "Assets/Wall.png");
     map = new Map();
     Map::LoadMap("map30*40.txt" , 30 , 40);
     Player.addComponent<TransformComponent>(100 , 875 , 75, 65 , 1);
     Player.addComponent<SpriteComponent>("Player");
-    Player.addComponent<KeyboardController>();
+    Player.addComponent<KeyboardController>(&manager);
     Player.addComponent<ColliderComponent>("Player");
-    Boat.addComponent<TransformComponent>(200 , 100 , 230 , 60 , 1);
-    Boat.addComponent<SpriteComponent>("Boat");
-    Boat.addComponent<ColliderComponent>("Boat");
-    Fuel.addComponent<TransformComponent>(200 , 500 , 80 , 150 ,1);
-    Fuel.addComponent<SpriteComponent>("Fuel");
-    Fuel.addComponent<ColliderComponent>("Fuel");
-    Chopter.addComponent<TransformComponent>(200 , 700 , 115 , 70 , 1);
-    Chopter.addComponent<SpriteComponent>("Chopter");
-    Chopter.addComponent<ColliderComponent>("Chopter");
+    Player.AddGroup(groupPlayers);
+    assets->CreateEnemy(Vector2D(200 , 100) , 2 ,"Boat");
+    assets->CreateFriend(Vector2D(200 , 50) , 2 , "Fuel");
+    assets->CreateEnemy(Vector2D(200 , 500) , 2 ,"Chopter");
+    assets->CreateEnemy(Vector2D(400 , 500) , 2 ,"Chopter");
+    assets->CreateWall(Vector2D(0 , -400) , 5 , "Wall");
 
+    
     
 
 }
@@ -82,23 +81,97 @@ void Game::HandleEvents(){
             break;
     }
 }
+auto& Players(manager.GetGroup(Game::groupPlayers));
+auto& Enemies(manager.GetGroup(Game::groupEnemies));
+auto& Projectiles(manager.GetGroup(Game::groupProjectiles));
+auto& Friends(manager.GetGroup(Game::groupFriend));
+auto& Walls(manager.GetGroup(Game::groupWall));
 void Game::Update(){
     // destRect.h = 60;
     // destRect.w = 75;
     manager.refresh();
     manager.Update();
-    for(auto cc : colliders)
+     //std::cout<<fuel<<std::endl;
+       for(auto& w : Walls)
+       {
+           if(w->getComponent<TransformComponent>().pos.y > 1200)
+           {
+               assets->CreateWall(Vector2D(0 , 0) , 5 , "Chopter");
+              w->Destroy();
+               
+           }
+           if(w->getComponent<TransformComponent>().pos.y > 1200);
+                
+       }
+    for(auto& e : Enemies)
     {
-        if(cc->tag != "Player")
+            for(auto& p : Projectiles)
+            {
+                if(Collision::AABB(e->getComponent<ColliderComponent>().collider , 
+                p->getComponent<ColliderComponent>().collider))
+                {
+                    p->Destroy();
+                    e->Destroy();
+                }
+            }
+        if(Collision::AABB(Player.getComponent<ColliderComponent>().collider , 
+        e->getComponent<ColliderComponent>().collider))
         {
-            Collision::AABB(Player.getComponent<ColliderComponent>(),*cc);
+           e->Destroy();
+           Health--;
+           if(Health <= 0)
+            isRunning = false;
+           std::cout<<Health<<std::endl;
+
         }
-   
     }
+    for(auto& f : Friends)
+    {
+
+            for(auto& p : Projectiles)
+            {
+                if(Collision::AABB(f->getComponent<ColliderComponent>().collider , 
+                p->getComponent<ColliderComponent>().collider))
+                {
+                    p->Destroy();
+                    f->Destroy();
+                }
+            }
+           
+
+        if(Collision::AABB(Player.getComponent<ColliderComponent>().collider , 
+        f->getComponent<ColliderComponent>().collider))
+        { 
+            if(fuel < 100)
+                fuel+= 0.5;
+
+        }
+    }
+     fuel-=0.3;
+       for(auto& w: Walls)
+            {
+                if(Collision::AABB(Player.getComponent<ColliderComponent>().collider , 
+                w->getComponent<ColliderComponent>().collider))
+                {
+                    w->Destroy();
+                    
+                }
+            }
+    //Boat.getComponent<TransformComponent>().pos.y +=5;
 }
+
 void Game::Render(){
     SDL_RenderClear(renderer);
-    manager.Draw();
+    for(auto& w : Walls)
+        w->Draw();
+     for(auto& e : Enemies)
+        e->Draw();
+    for(auto& f : Friends)
+    f->Draw();
+    for(auto& p : Players)
+        p->Draw();
+    for(auto& proj : Projectiles)
+        proj->Draw();
     SDL_RenderPresent(renderer);
 }
 void Game::Clean(){

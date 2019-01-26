@@ -3,12 +3,19 @@
 #include "../Game.h"
 #include "ECS.h"
 #include "Components.h"
+#include "../AssetManager.h"
 
 class KeyboardController : public Component
 {
+private:
+Manager* manager;
 public:
     TransformComponent* transform;
     SpriteComponent* sprite;
+    KeyboardController(Manager* man) : manager(man)
+    {
+
+    }
     void Init() override
     {
         transform = &entity->getComponent<TransformComponent>();
@@ -18,7 +25,6 @@ public:
 
     void Update() override
     {
-            
         if(Game::event.type == SDL_KEYDOWN)
         {
             switch(Game::event.key.keysym.sym)
@@ -37,7 +43,10 @@ public:
                 case SDLK_DOWN:
                     transform->velocity.y = 1;
                     break;
-                case SDLK_SPACE:;
+                case SDLK_SPACE:
+                if(manager->GetGroup(Game::groupProjectiles).size() < 2)
+                Game::assets->CreateProjectile(Vector2D(transform->pos.x + transform->width/2,transform->pos.y),300,30 , "Projectile");
+                
                 break;
                 }
         }
