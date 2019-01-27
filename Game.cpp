@@ -6,7 +6,8 @@
 #include "Collision.h"
 #include "AssetManager.h"
 #include <sstream>
-
+#include <fstream>
+#include <string>
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Texture* playertexture= nullptr;
 TTF_Font* font;
@@ -49,6 +50,12 @@ void Game::Init(const char* title , int x , int y , int width , int height , boo
         if(TTF_Init() < 0)
             std::cout<<"TTF FAILED"<<std::endl;
         font = TTF_OpenFont("Assets/font.ttf",18);
+        std::fstream myfile;
+        myfile.open("HighScore.txt");
+        
+        while(!myfile.eof())
+            myfile>>highScore;
+        std::cout<<highScore<<std::endl;
 
     }
     else{
@@ -56,7 +63,7 @@ void Game::Init(const char* title , int x , int y , int width , int height , boo
     }
     if(TTF_Init() == -1)
     {
-        std::cout<<"Err TTF"<<std::endl;
+        std::cout<<"Error TTF"<<std::endl;
     }
     assets->AddFont("font" , "Assets/font.ttf" , 16);
     assets->AddTexture("Player" , "Assets/Plane.png");
@@ -123,17 +130,22 @@ auto& Walls(manager.GetGroup(Game::groupWall));
 void Game::Update(){
     // destRect.h = 60;
     // destRect.w = 75;
-    std::stringstream ss;
-    ss << "Health: " << health ;
-    Health.getComponent<UILabel>().SetLabelText(ss.str() , "font");
-    ss <<"Fuel: "<<fuel;
-    Fuel.getComponent<UILabel>().SetLabelText(ss.str() , "font");
-    ss <<"Enemies Killed: "<<fuel;
-    Fuel.getComponent<UILabel>().SetLabelText(ss.str() , "font");
-    ss <<"Score: "<<score;
-    Fuel.getComponent<UILabel>().SetLabelText(ss.str() , "font");
-    ss <<"HighScore: "<<highScore;
-    Fuel.getComponent<UILabel>().SetLabelText(ss.str() , "font");
+    score+=speed;
+    std::stringstream s1;
+    std::stringstream s2;
+    std::stringstream s3;
+    std::stringstream s4;
+    std::stringstream s5;
+    s1 << "Health: " << health ;
+    Health.getComponent<UILabel>().SetLabelText(s1.str() , "font");
+    s2 <<"Fuel: "<<fuel;
+    Fuel.getComponent<UILabel>().SetLabelText(s2.str() , "font");
+    s3 <<"Enemies Killed: "<<enemiesKilled;
+    EnemiesKilled.getComponent<UILabel>().SetLabelText(s3.str() , "font");
+    s4 <<"Score: "<<score;
+    Score.getComponent<UILabel>().SetLabelText(s4.str() , "font");
+    s5 <<"HighScore: "<<highScore;
+    Highscore.getComponent<UILabel>().SetLabelText(s5.str() , "font");
     manager.refresh();
     manager.Update();
      //std::cout<<manager.GetGroup(groupWall).size()<<std::endl;
@@ -149,7 +161,12 @@ void Game::Update(){
         if(Collision::AABB(Player.getComponent<ColliderComponent>().collider , 
         p->getComponent<ColliderComponent>().collider))
         {
-            isRunning = false;
+             
+            health--;
+           if(health <= 0)
+            GameOver();
+            break;
+           
         }
     }
     if(manager.GetGroup(groupEnemies).size()< 5)
@@ -168,7 +185,7 @@ void Game::Update(){
         if(Collision::AABB(Player.getComponent<ColliderComponent>().collider , 
         w->getComponent<ColliderComponent>().collider))
         {
-            isRunning = false;
+            GameOver();
         }
             
         for(auto& e : Enemies)
@@ -187,7 +204,9 @@ void Game::Update(){
 
     for(auto& e : Enemies)
     {
-
+        //std::cout<<manager.GetGroup(groupEnemies).size()<<std::endl;
+        if(e->getComponent<TransformComponent>().pos.y > 1200)
+            e->Destroy();
         e->getComponent<TransformComponent>().speed = speed;
         if(e->getComponent<TransformComponent>().velocity.x == -1 && e->getComponent<ColliderComponent>().tag == "Boat")
         {
@@ -212,13 +231,14 @@ void Game::Update(){
             }
         }
     
-        
+    
         for(auto& p : Projectiles)
         {
             if(Collision::AABB(e->getComponent<ColliderComponent>().collider , 
             p->getComponent<ColliderComponent>().collider))
             {
                 p->Destroy();
+                enemiesKilled++;
                 e->Destroy();
                 
             }
@@ -231,8 +251,8 @@ void Game::Update(){
            e->Destroy();
            health--;
            if(health <= 0)
-            isRunning = false;
-           std::cout<<health<<std::endl;
+            GameOver();
+           //std::cout<<health<<std::endl;
 
         }
     }
@@ -260,6 +280,8 @@ void Game::Update(){
 
         }
     }
+    if(fuel <= 0)
+        GameOver();
      fuel-=0.05;
     
 }
@@ -293,5 +315,22 @@ void Game::Clean(){
 }
 bool Game::Running(){
     return isRunning;
+}
+
+void Game::GameOver()
+{   
+    if(score > highScore)
+    {
+        std::fstream  myFile;
+        myFile.open("HighScore.txt");
+        highScore = score;
+        std::string s = std::to_string(highScore);
+        myFile.write(s.c_str() , s.size());
+        std::cout<<s.size()<<std::endl;
+        myFile.close();
+        }
+    isRunning = false;
+    
+   
 }
 

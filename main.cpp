@@ -8,7 +8,6 @@ Uint32 frameStart;
 int frameTime;
 
 
-
     game = new Game();  
     game->Init("Atari Plane" , SDL_WINDOWPOS_CENTERED ,SDL_WINDOWPOS_CENTERED , 900 , 1200 , false );
     while(game->Running())
@@ -25,6 +24,7 @@ int frameTime;
            SDL_Delay(frameDelay - frameTime );
         }
     }
+    
     game->Clean();
     return 0;
    

@@ -41,14 +41,14 @@ private:
 float speedMultiplier = 0.f;
 int speed = 5;
     int enemiesKilled = 0;
-    int highScore;
-    int score;
+    int highScore = 0;
+    float score;
     bool isRunning;
     SDL_Window* window;
     int count;
     int health = 5;
     float fuel = 100.f;
-    
+    bool enemyProjectileHitPlayer = false;
 };
 
 #endif
