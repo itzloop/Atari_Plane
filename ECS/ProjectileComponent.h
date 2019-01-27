@@ -19,17 +19,25 @@ void Init() override{
 }
 void Update() override
 {
-    distance += speed;
     
      if(transform->pos.y < 0 ||
             transform->pos.x < 0 ||
-            transform->pos.x > 900
+            transform->pos.x > 900 ||
+            transform->pos.y > 1200
     )
         entity->Destroy();
     
 }
-
+void AIShoot(bool shoot)
+{
+    canShoot = shoot;
+}
+bool AICanShoot()
+{
+    return canShoot;
+}
 private:
+    bool canShoot = false;
     TransformComponent* transform;
     int range = 0;
     int speed = 10;

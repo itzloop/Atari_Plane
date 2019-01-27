@@ -45,7 +45,7 @@ public:
                     break;
                 case SDLK_SPACE:
                 if(manager->GetGroup(Game::groupProjectiles).size() < 2)
-                Game::assets->CreateProjectile(Vector2D(transform->pos.x + transform->width/2,transform->pos.y),300,30 , "Projectile");
+                Game::assets->CreateProjectile(Vector2D(transform->pos.x + transform->width/2,transform->pos.y),300,30 , "Projectile" ,true);
                 
                 break;
                 }

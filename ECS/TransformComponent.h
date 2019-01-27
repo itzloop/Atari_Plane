@@ -10,12 +10,14 @@ private:
 
 
 public:
+    bool enteredScreen = false;
     int height = 400;
     int width = 200;
     int scale = 1;
     Vector2D pos; 
     Vector2D velocity;
     int speed = 8;
+    bool AICanShoot = false;
     TransformComponent(){
         pos.Zero();
         velocity.Zero();
@@ -46,6 +48,8 @@ public:
 
     void Update() override
     {
+        if(AICanShoot)
+            velocity.y = 1;
         if(velocity.x == 1 ) 
         {
             
@@ -59,10 +63,6 @@ public:
             if(pos.x >= 0)
                 pos.x += velocity.x * speed;
         }
-
-        
-       
-
         pos.y += velocity.y * speed;
     }
 

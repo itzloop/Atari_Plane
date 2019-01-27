@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include "SDL2/SDL_ttf.h"
 #include <iostream>
 #include <vector>
 class ColliderComponent;
@@ -19,7 +20,6 @@ public:
     void Render();
     void Clean();
     bool Running();
-    static void AddTile(int id , int x , int y);
     static SDL_Renderer* renderer;
     static AssetManager* assets;
     static SDL_Event event;
@@ -31,15 +31,22 @@ public:
     groupEnemies,
     groupColliders,
     groupFriend,
-    groupProjectiles
+    groupProjectiles,
+    groupEnemyProjectiles
 };
 
     static std::vector<ColliderComponent*> colliders;
+    void GameOver();
 private:
+float speedMultiplier = 0.f;
+int speed = 5;
+    int enemiesKilled = 0;
+    int highScore;
+    int score;
     bool isRunning;
     SDL_Window* window;
     int count;
-    int Health = 5;
+    int health = 5;
     float fuel = 100.f;
     
 };
